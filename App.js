@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import { View, Text, Button } from "react-native";
 
 /*
-  increase session timer
-  decrease session timer
-  decrease timer by each second
+  add alarm sound
+  style components
 */
 
 class App extends Component {
@@ -18,7 +17,10 @@ class App extends Component {
     this.decreaseSessionLength = this.decreaseSessionLength.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.resetTimer = this.resetTimer.bind(this);
+    this.countdown = this.countdown.bind(this);
+    this.stopCountdown = this.stopCountdown.bind(this);
   }
+
 
   //set intial session time
   
@@ -29,6 +31,7 @@ class App extends Component {
       session: initSession
     })
   }
+
 
   // Break Length
   increaseBreak() {
@@ -69,9 +72,9 @@ class App extends Component {
     if(this.state.timerStarted == true){
       return
     }
+
     let newSessionLength = this.state.sessionLength + 1;
-    
-    let newSessionTimer = this.state.sessionTimer + 1;
+    let newSessionTimer = this.state.sessionTimer + 60;
     let newSession = new Date(newSessionTimer * 1000).toTimeString('mm:ss').substr(3,5);
     
     this.setState({
@@ -88,39 +91,77 @@ class App extends Component {
     }
 
     let newSessionLength = this.state.sessionLength - 1;
+    let newSessionTimer = this.state.sessionTimer - 60;
+    let newSession = new Date(newSessionTimer * 1000).toTimeString('mm:ss').substr(3,5);
+
     if(newSessionLength < 1){
       this.setState({
         sessionLength: 1
       })
     }else{
       this.setState({
-        sessionLength: newSessionLength
+        sessionLength: newSessionLength,
+        session: newSession,
+        sessionTimer: newSessionTimer
       })
     }
   }
 
+  // Timer countdown methods
+
+  countdown(){
+      this.intervalID = setInterval(()=>{
+        let newSessionTimer = this.state.sessionTimer - 1;
+        let newSession = new Date(newSessionTimer * 1000).toTimeString('mm:ss').substr(3,5);
+        if(newSessionTimer < 0){
+          alert("finished");
+          this.stopCountdown();
+          return;
+        }else{
+          this.setState({
+            sessionTimer: newSessionTimer,
+            session: newSession        
+          })
+        } 
+      },1000);
+  }
+
+  stopCountdown(){
+    clearInterval(this.intervalID);
+  }
+
   // Session Timer
   startTimer(){
+
     if(this.state.timerStarted == false){
       this.setState({
         timerStarted: true
       })
 
-
+      this.countdown();
     }else{
       this.setState({
         timerStarted: false
       })
+
+      this.stopCountdown();
+
     }
   }
 
   resetTimer(){
+
+    let initSession = new Date(1500 * 1000).toTimeString('mm:ss').substr(3,5);
+
     this.setState({
       breakLength: 5,
       sessionLength: 25,
-      session: 25,
+      session: initSession,
+      sessionTimer: 1500,
       timerStarted: false
     })
+
+    this.stopCountdown();
   }
 
 
