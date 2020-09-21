@@ -1,9 +1,14 @@
 import React, { Component } from "react";
-import { View, Text, Button } from "react-native";
-
+import { View, Text, Button, TouchableOpacity} from "react-native";
+import TimerDisplay from './components/timeDisplays';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {faArrowUp, faArrowDown, faPause, faRedo, faPlay} from '@fortawesome/free-solid-svg-icons'
 /*
   add alarm sound
   style components
+  find start icon
+
+  create components from views
 */
 
 class App extends Component {
@@ -19,6 +24,7 @@ class App extends Component {
     this.resetTimer = this.resetTimer.bind(this);
     this.countdown = this.countdown.bind(this);
     this.stopCountdown = this.stopCountdown.bind(this);
+    this.showPlayButton = this.showPlayButton.bind(this);
   }
 
 
@@ -165,8 +171,16 @@ class App extends Component {
   }
 
 
+  // play button
 
-  
+  showPlayButton(){
+    if(this.state.timerStarted == true){
+      return <FontAwesomeIcon icon={faPause} color='yellow'/>
+    }else{
+      return <FontAwesomeIcon icon={faPlay} color='green'/>
+    }
+  }
+ 
   render() {
 
     return (
@@ -175,45 +189,53 @@ class App extends Component {
         marginTop: 50
       }}>
         <Text>Pomodoro Clock</Text>
+        
+        {/* Break Timer */}
         <View>
-            <Text>{this.state.breakLength}</Text>
-            <Button 
-              title = "up"
-              onPress={this.increaseBreak}
-            />
-            <Button 
-              title = "down"
-              onPress={this.decreaseBreak}
-            />
+          <TimerDisplay 
+            title={this.state.breakLength}
+            pressFunction1 = {this.increaseBreak}
+            pressFunction2 = {this.decreaseBreak}
+            view1 = { <FontAwesomeIcon icon={faArrowUp} color='blue'/>}
+            view2 = { <FontAwesomeIcon icon={faArrowDown} color='blue'/>}
+          />       
         </View>
 
+        {/* Session Timer */}
         <View>
-            <Text>{this.state.sessionLength}</Text>
-            <Button 
-              title = "up"
-              onPress={this.increaseSessionLength}
-            />
-            <Button 
-              title = "down"
-              onPress={this.decreaseSessionLength}
-            />
+          <TimerDisplay
+            title = {this.state.sessionLength}
+            pressFunction1 = {this.increaseSessionLength}
+            pressFunction2 = {this.decreaseSessionLength}
+            view1 = { <FontAwesomeIcon icon={faArrowUp} color='blue'/> }
+            view2 = { <FontAwesomeIcon icon={faArrowDown} color='blue'/>}
+          />    
         </View>
-        
+
+        {/* Play Button */}
         <View>
-            <Text>{this.state.session}</Text>
-            <Button
-              title="start/stop"
-              onPress={this.startTimer}
-            />
-            <Button
-              title="reset"
-              onPress={this.resetTimer}
-            />
+
+          <TimerDisplay
+            title = {this.state.session}
+            pressFunction1 = {this.startTimer}
+            pressFunction2 = {this.resetTimer}
+            view1 = {this.showPlayButton()}
+            view2 = {<FontAwesomeIcon icon={faRedo} color='red'/>}
+          />
+            
         </View>
-        
+
       </View>
     );
   }
 }
 
 export default App;
+
+
+/**
+ *          
+ * 
+ * 
+ * 
+ */
